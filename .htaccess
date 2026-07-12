@@ -1,0 +1,31 @@
+# CCFM — clean (extension-less) URLs and small niceties.
+
+# NB: this vhost's AllowOverride only permits SymLinksIfOwnerMatch (not FollowSymLinks) in .htaccess.
+Options +SymLinksIfOwnerMatch -MultiViews
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1) Home: /index or /index.html -> / (single hop).
+  RewriteCond %{THE_REQUEST} \s/+index(\.html)?[\s?] [NC]
+  RewriteRule ^ / [R=301,L]
+
+  # 2) Any other request that explicitly includes ".html" -> clean URL (301).
+  RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+  RewriteRule ^ /%1 [R=301,L]
+
+  # 2) Internally serve the .html file for a clean URL, if it exists.
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+</IfModule>
+
+# NB: mod_expires / mod_headers are NOT enabled on this server, so cache TTLs are
+# controlled by Cloudflare's edge defaults. CSS/JS are cache-busted via a ?v= query
+# in the HTML (bump it when assets change) so updates propagate immediately.
+
+# Don't serve the raw handler include listing
+<Files ".htaccess">
+  Require all denied
+</Files>
