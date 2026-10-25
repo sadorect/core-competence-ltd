@@ -2,7 +2,7 @@
 
 # NB: this vhost's AllowOverride only permits SymLinksIfOwnerMatch (not FollowSymLinks) in .htaccess.
 Options +SymLinksIfOwnerMatch -MultiViews
-DirectoryIndex index.html
+DirectoryIndex index.html index.php
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -15,7 +15,10 @@ DirectoryIndex index.html
   RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
   RewriteRule ^ /%1 [R=301,L]
 
-  # 2) Internally serve the .html file for a clean URL, if it exists.
+  # 2b) Gallery is now dynamic (PHP): serve the handler at the clean /gallery URL.
+  RewriteRule ^gallery/?$ gallery.php [L]
+
+  # 3) Internally serve the .html file for a clean URL, if it exists.
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME}\.html -f
   RewriteRule ^(.+?)/?$ $1.html [L]

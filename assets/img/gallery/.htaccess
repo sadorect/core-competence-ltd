@@ -1,0 +1,8 @@
+# Hardening for the gallery upload directory.
+# Uploads are re-encoded to plain JPEGs by the admin, but as defense-in-depth we
+# refuse to serve anything executable or markup-bearing from here regardless.
+<FilesMatch "(?i)\.(php|phtml|phar|php[0-9]|pht|cgi|pl|py|sh|html?|htm|svgz)$">
+  Require all denied
+</FilesMatch>
+# NB: this vhost's AllowOverride restricts Options (only SymLinksIfOwnerMatch is
+# permitted), so no Options line here — the Require denial above is the guard.

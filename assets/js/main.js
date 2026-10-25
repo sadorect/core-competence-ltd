@@ -71,6 +71,90 @@
     });
   }
 
+  /* ---- Gallery: sector filtering + lightbox (only on the gallery page) ---- */
+  var galleryGrid = document.getElementById("gallery-grid");
+  if (galleryGrid) {
+    var items = Array.prototype.slice.call(galleryGrid.querySelectorAll(".gallery-item"));
+    var filterBar = document.querySelector(".filter-bar");
+
+    /* Filtering — hide tiles whose category doesn't match the pressed button. */
+    if (filterBar) {
+      filterBar.addEventListener("click", function (ev) {
+        var btn = ev.target.closest(".filter-btn");
+        if (!btn) return;
+        var filter = btn.getAttribute("data-filter");
+        filterBar.querySelectorAll(".filter-btn").forEach(function (b) {
+          b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+        });
+        items.forEach(function (item) {
+          var show = filter === "all" || item.getAttribute("data-category") === filter;
+          item.classList.toggle("is-hidden", !show);
+        });
+      });
+    }
+
+    /* Lightbox */
+    var lightbox = document.getElementById("lightbox");
+    var lbImg = document.getElementById("lightbox-img");
+    var lbCaption = document.getElementById("lightbox-caption");
+    if (lightbox && lbImg) {
+      var closeBtn = lightbox.querySelector(".lightbox__close");
+      var prevBtn = lightbox.querySelector(".lightbox__nav--prev");
+      var nextBtn = lightbox.querySelector(".lightbox__nav--next");
+      var visibleBtns = [];   // buttons for currently-visible tiles
+      var currentIndex = 0;
+      var lastFocused = null;
+
+      function visibleTiles() {
+        return items.filter(function (item) { return !item.classList.contains("is-hidden"); });
+      }
+      function show(index) {
+        if (!visibleBtns.length) return;
+        currentIndex = (index + visibleBtns.length) % visibleBtns.length;
+        var btn = visibleBtns[currentIndex];
+        lbImg.setAttribute("src", btn.getAttribute("data-full"));
+        var cap = btn.getAttribute("data-caption") || "";
+        lbImg.setAttribute("alt", cap);
+        if (lbCaption) { lbCaption.textContent = cap; }
+      }
+      function open(btn) {
+        visibleBtns = visibleTiles().map(function (item) { return item.querySelector(".gallery-item__btn"); });
+        var idx = visibleBtns.indexOf(btn);
+        if (idx < 0) return;
+        lastFocused = btn;
+        show(idx);
+        lightbox.classList.add("is-open");
+        lightbox.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        if (closeBtn) { closeBtn.focus(); }
+      }
+      function close() {
+        lightbox.classList.remove("is-open");
+        lightbox.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (lastFocused) { lastFocused.focus(); }
+      }
+
+      galleryGrid.addEventListener("click", function (ev) {
+        var btn = ev.target.closest(".gallery-item__btn");
+        if (btn) { ev.preventDefault(); open(btn); }
+      });
+      if (closeBtn) { closeBtn.addEventListener("click", close); }
+      if (prevBtn) { prevBtn.addEventListener("click", function () { show(currentIndex - 1); }); }
+      if (nextBtn) { nextBtn.addEventListener("click", function () { show(currentIndex + 1); }); }
+      // Click on the backdrop (not the image/controls) closes.
+      lightbox.addEventListener("click", function (ev) {
+        if (ev.target === lightbox || ev.target.classList.contains("lightbox__figure")) { close(); }
+      });
+      document.addEventListener("keydown", function (ev) {
+        if (!lightbox.classList.contains("is-open")) return;
+        if (ev.key === "Escape") { close(); }
+        else if (ev.key === "ArrowLeft") { show(currentIndex - 1); }
+        else if (ev.key === "ArrowRight") { show(currentIndex + 1); }
+      });
+    }
+  }
+
   /* ---- Footer year ---- */
   var yr = document.getElementById("year");
   if (yr) { yr.textContent = new Date().getFullYear(); }

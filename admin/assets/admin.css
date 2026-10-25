@@ -1,0 +1,70 @@
+/* CCFM gallery admin — layout on top of the site's design tokens (styles.css). */
+
+.admin-body { background: var(--color-bg-alt); }
+
+/* Button size/variant helpers used only in admin. */
+.btn--sm { padding: .45rem .85rem; font-size: .85rem; }
+.btn--danger { --btn-bg: #c8322f; --btn-fg: #fff; background: #c8322f; color: #fff; border-color: #c8322f; }
+.btn--danger:hover { background: #a52926; border-color: #a52926; }
+.inline-form { display: inline; margin: 0; }
+
+/* ---- Auth (login / setup) ---- */
+.admin-auth { min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem; }
+.auth-card {
+  width: 100%; max-width: 400px; background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius); box-shadow: var(--shadow); padding: 2rem;
+}
+.auth-logo { display: block; margin-bottom: 1.2rem; }
+.auth-card h1 { font-size: 1.4rem; margin-bottom: .4rem; }
+.auth-note { color: var(--color-muted); font-size: .95rem; margin-bottom: 1.3rem; }
+.auth-card .field { margin-bottom: 1rem; }
+.auth-card .btn { width: 100%; justify-content: center; }
+.auth-back { margin-top: 1.2rem; font-size: .9rem; }
+.captcha-row { display: flex; align-items: center; gap: .6rem; margin-bottom: .5rem; }
+.captcha-img { border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: #f5f7fb; display: block; }
+.captcha-reload { font-size: 1.3rem; line-height: 1; text-decoration: none; color: var(--color-muted); padding: .3rem .5rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.captcha-reload:hover { color: var(--color-primary); border-color: var(--color-primary); text-decoration: none; }
+
+/* ---- Topbar ---- */
+.admin-topbar { background: var(--color-surface); border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 20; }
+.admin-topbar__inner { max-width: var(--maxw); margin-inline: auto; padding: .7rem var(--gutter); display: flex; align-items: center; gap: 1rem; }
+.admin-topbar__title { font-weight: 700; color: var(--color-heading); }
+.admin-topbar__actions { margin-left: auto; display: flex; align-items: center; gap: .6rem; }
+
+/* ---- Main ---- */
+.admin-main { padding-block: 2rem 4rem; }
+.admin-card {
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 1.6rem; margin-bottom: 1.6rem;
+}
+.admin-card h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+.admin-card__head { margin-bottom: 1rem; }
+.admin-card__head h2 { margin-bottom: .2rem; }
+.admin-card__head .count { color: var(--color-muted); font-weight: 400; }
+.upload-form .btn { margin-top: .4rem; }
+.empty { color: var(--color-muted); }
+
+/* ---- Tile list (manage) ---- */
+.tile-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+.tile {
+  position: relative; border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  background: var(--color-bg); overflow: hidden; display: flex; flex-direction: column;
+}
+.tile.is-dragging { opacity: .5; outline: 2px dashed var(--color-accent); }
+.tile__handle { position: absolute; top: .4rem; left: .4rem; background: rgba(0,0,0,.55); color: #fff; border-radius: 6px; padding: .1rem .4rem; cursor: grab; font-size: .85rem; letter-spacing: -1px; }
+.tile__thumb { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: var(--color-surface-2); }
+.tile__form { padding: .8rem; display: flex; flex-direction: column; gap: .55rem; }
+.tile__form label { font-size: .78rem; font-weight: 600; color: var(--color-muted); display: flex; flex-direction: column; gap: .2rem; }
+.tile__form input, .tile__form select { padding: .5rem .6rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-text); font: inherit; font-size: .9rem; }
+.tile__form input:focus, .tile__form select:focus { border-color: var(--color-primary); box-shadow: var(--ring); outline: none; }
+.tile__actions { margin-top: .2rem; }
+.tile__delete { padding: 0 .8rem .8rem; margin: 0; }
+
+/* ---- Reorder toast ---- */
+.reorder-flash { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--color-primary); color: var(--color-on-primary); padding: .55rem 1.1rem; border-radius: 999px; font-size: .9rem; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: opacity var(--transition), transform var(--transition); z-index: 50; }
+.reorder-flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.reorder-flash.is-err { background: #c8322f; color: #fff; }
+
+@media (max-width: 560px) {
+  .admin-topbar__title { display: none; }
+}
